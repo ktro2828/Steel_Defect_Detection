@@ -4,7 +4,7 @@
 """
 
 import torch.nn as nn
-import torch.nn.function as F
+import torch.nn.functional as F
 
 
 class DiceLoss(nn.Module):

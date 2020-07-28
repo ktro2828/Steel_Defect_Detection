@@ -4,8 +4,8 @@
 import io
 import os
 
-from albumentation import HorizontalFlip, ShiftScaleRotate, Normalize, Resize, Compose, GaussNoize
-from albumentation.pytorch import Totensor
+from albumentations import HorizontalFlip, ShiftScaleRotate, Normalize, Resize, Compose, GaussNoise
+from albumentations.pytorch import ToTensor
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
@@ -58,7 +58,7 @@ def get_transforms(phase, mean, std):
         tf_list.extend([HorizontalFlip(p=0.5)])
     tf_list.extend([
         Normalize(mean=mean, std=std, p=1),
-        Totensor()
+        ToTensor()
     ])
     trans = Compose(tf_list)
     return trans
