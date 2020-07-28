@@ -29,10 +29,61 @@ class ResUNet_a(nn.Module):
         self.conv6 = nn.Conv2d(512, 1024, kernel_size=1, stride=2)
         self.block6 = ResBlock_a(1024, dilations=1)
         self.psppool1 = PSPPool(1024)
+        self.up1 = Upsampling(512)
+        self.comb1 = Combine(512)
+        self.up_block1 = ResBlock_a(512, dilations=1)
+        self.up2 = Upsampling(256)
+        self.comb2 = Combine(256)
+        self.up_block2 = ResBlock_a(256, dilations=1)
+        self.up3 = Upsampling(128)
+        self.comb3 = Combine(128)
+        self.up_block3 = ResBlock_a(128, dilations=1)
+        self.up4 = Upsampling(64)
+        self.comb4 = Combine(64)
+        self.up_block4 = ResBlock_a(64, dilations=1)
+        self.up5 = Upsampling(32)
+        self.comb5 = Combine(32)
+        self.up_block5 = ResBlock_a(32, dilations=1)
+        self.comb6 = Combine(32)
+        self.psppool2 = PSPPool(32)
+        self.conv_out = nn.Conv2d(32, n_classes, kernel_size=1, stride=1)
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
+        c1 = x = self.conv1(x)
+        c2 = x = self.block1(x)
+        x = self.conv2(x)
+        c3 = x = self.block2(x)
+        x = self.conv3(x)
+        c4 = x = self.block3(x)
+        x = self.conv4(x)
+        c5 = x = self.block4(x)
+        x = self.conv5(x)
+        c6 = x = self.block5(x)
+        x = self.conv6(x)
+        x = self.block6(x)
+        x = self.psppool1(x)
+        x = self.up1(x)
+        x = self.comb1(x, c6)
+        x = self.up_block1(x)
+        x = self.up2(x)
+        x = self.comb2(x, c5)
+        x = self.up_block2(x)
+        x = self.up3(x)
+        x = self.comb3(x, c4)
+        x = self.up_block3(x)
+        x = self.up4(x)
+        x = self.comb4(x, c3)
+        x = self.up_block4(x)
+        x = self.up5(x)
+        x = self.comb5(x, c2)
+        x = self.up_block5(x)
+        x = self.comb6(x, c1)
+        x = self.psppool2(x)
+        x = self.conv_out(x)
+        x = self.softmax(x)
 
-        return
+        return x
 
 
 class ResBlock_a(nn.Module):
@@ -168,6 +219,27 @@ class PSPBlock(nn.Module):
 
     def forward(self, x):
         x = self.block(x)
+        return x
+
+
+class Upsampling(nn.Module):
+    """Upsampling block
+
+    Args:
+        out_ch(int): number of output channels
+        in_ch(int: default=None): number of input channels
+    """
+
+    def __init__(self, out_ch, in_ch=None):
+        if in_ch is None:
+            in_ch = int(out_ch / 2)
+        self.up = nn.Sequential(
+            nn.Conv2d(in_ch, out_ch, kernel_size=1),
+            nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        )
+
+    def forward(self, x):
+        x = self.up(x)
         return x
 
 
