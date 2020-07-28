@@ -7,7 +7,7 @@ import os.path as osp
 import numpy as np
 import torch
 
-from visualize import plot
+from utils import plot
 from trainer import Trainer
 from unet import UNet
 

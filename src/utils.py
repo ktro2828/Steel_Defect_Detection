@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
@@ -120,3 +121,14 @@ def epoch_log(phase, epoch, epoch_loss, meter, start):
           (epoch_loss, dice, dice_neg, dice_pos))
 
     return dice, iou
+
+
+def plot(scores, name):
+    plt.figure(figsize=(15, 5))
+    plt.plot(range(len(scores['train'])),
+             scores['train'], label='train{}'.format(name))
+    plt.title('{}plot'.format(name))
+    plt.xlabel('Epoch')
+    plt.ylabel('{}'.format(name))
+    plt.legend()
+    plt.show()
