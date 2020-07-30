@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-from lossfuncs import DiceLoss, DiceBCELoss, IoULoss
+from lossfuncs import DiceLoss, DiceBCELoss, IoULoss, TanimotoLoss
 
 
 def _metric(prob, truth, threshold, reduction=None):

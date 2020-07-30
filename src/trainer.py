@@ -18,7 +18,7 @@ from lossfuncs import DiceLoss, DiceBCELoss, IoULoss, TanimotoLoss
 class Trainer(object):
     """Trainer class taking care of training and validation"""
 
-    def __init__(self, model, loss='BCE'):
+    def __init__(self, model, loss='DiceBCE'):
         train_df_path = '../dataset/train.csv'
         data_folder = osp.dirname(train_df_path)
         self.num_workers = 6
@@ -44,7 +44,7 @@ class Trainer(object):
         elif loss == 'Tanimoto':
             self.criterion = TanimotoLoss()
         else:
-            print('LOSS FUNCTION UNDIFINED')
+            raise Exception('Loss Function is not Defined')
 
         self.dataloaders = {
             phase: dataloader(
