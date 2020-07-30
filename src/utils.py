@@ -53,11 +53,11 @@ def _predict(x, threshold):
     return preds
 
 
-def _compute_iou_batch(pred,
-                       label,
-                       classes,
-                       ignore_index=255,
-                       only_present=True):
+def _compute_ious(pred,
+                  label,
+                  classes,
+                  ignore_index=255,
+                  only_present=True):
     """Compute IoU for each batch
 
     Args:
@@ -80,6 +80,19 @@ def _compute_iou_batch(pred,
         if union != 0:
             ious.append(intersection / union)
     return ious if ious else [1]
+
+
+def compute_iou_batch(outputs, labels, classes=None):
+    """Compute mean iou for a batch of ground truth masks and predicted masks"""
+
+    ious = []
+    preds = np.copy(outputs)
+    labels = np.array(labels)
+    for pred, label in zip(preds, labels):
+        ious.append(no.nanmean(compute_ious(pred, label, classes)))
+    iou = np.nanmean(ious)
+
+    return iou
 
 
 class Meter(object):
