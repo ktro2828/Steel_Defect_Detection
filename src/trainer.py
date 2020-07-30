@@ -45,7 +45,6 @@ class Trainer(object):
             self.criterion = TanimotoLoss()
         else:
             print('LOSS FUNCTION UNDIFINED')
-            raise
 
         self.dataloaders = {
             phase: dataloader(
