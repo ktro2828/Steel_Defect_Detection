@@ -34,6 +34,7 @@ def main(args):
         model = UNet(3, 4)
     else:
         model = ResUNet_a(3, 4)
+
     model_trainer = Trainer(model, loss=args.loss)
     model_trainer.start()
 
