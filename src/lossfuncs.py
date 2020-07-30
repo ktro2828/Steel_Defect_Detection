@@ -3,6 +3,7 @@
 """inputs = F.sigmoid(inputs)
 """
 
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -54,3 +55,21 @@ class IoULoss(nn.Module):
         IoU = (intersection + smooth)/(union + smooth)
 
         return 1 - IoU
+
+
+class TanimotoLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(TanimotoLoss, self).__init__()
+
+    def forward(self, inputs, targets, smooth=1):
+        inputs = torch.view(-1)
+        targets = torch.view(-1)
+        square_i = torch.square(inputs)
+        square_t = torch.square(targets)
+        square_sum = (square_i + square_t).sum()
+        intersection = (inputs * targets).sum()
+        denominator = square_sum + intersection
+
+        tanimoto = (intersection + smooth) / (denominator + smooth)
+
+        return 1 - tanimoto

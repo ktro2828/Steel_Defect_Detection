@@ -171,10 +171,11 @@ class PSPPool(nn.Module):
             in_ch = out_ch
         if isinstance(scales, int):
             scales = tuple((scales,))
+        self.scales = scales
         self.psppool = nn.ModuleList([
-            self._build(in_ch, out_ch, p) for p in scales
+            self._build(in_ch, out_ch, s) for s in self.scales
         ])
-        self.conv = nn.Conv2d(in_ch, out_ch, kernel_size=1, stride=1)
+        self.conv = nn.Conv2d(2*in_ch, out_ch, kernel_size=1, stride=1)
         self.shortcut = self._shortcut(in_ch, out_ch)
 
     def forward(self, x):
@@ -185,8 +186,8 @@ class PSPPool(nn.Module):
         x = self.conv(x)
         return x
 
-    def _build(self, in_ch, s):
-        out_ch = in_ch
+    def _build(self, in_ch, out_ch, s):
+        out_ch = int(out_ch / len(self.scales))
         return PSPBlock(in_ch, out_ch, s)
 
     def _shortcut(self, in_ch, out_ch):
@@ -210,11 +211,10 @@ class PSPBlock(nn.Module):
 
     def __init__(self, in_ch, out_ch, s):
         super(PSPBlock, self).__init__()
-        out_ch = int(out_ch / 4)
         self.block = nn.Sequential(
             nn.MaxPool2d(kernel_size=s),
             nn.Conv2d(in_ch, out_ch, kernel_size=1),
-            nn.Upsample(size=(8, 8)),
+            nn.Upsample(scale_factor=s),
         )
 
     def forward(self, x):
@@ -230,13 +230,20 @@ class Upsampling(nn.Module):
         in_ch(int: default=None): number of input channels
     """
 
-    def __init__(self, out_ch, in_ch=None):
+    def __init__(self, out_ch, in_ch=None, bilinear=True):
+        super(Upsampling, self).__init__()
         if in_ch is None:
-            in_ch = int(out_ch / 2)
-        self.up = nn.Sequential(
-            nn.Conv2d(in_ch, out_ch, kernel_size=1),
-            nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
-        )
+            in_ch = int(2 * out_ch)
+        if bilinear:
+            self.up = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, kernel_size=1),
+                nn.Upsample(scale_factor=2, mode='bilinear',
+                            align_corners=True)
+            )
+        else:
+            self.up = nn.ConvTranspose2d(
+                in_ch / 2, out_ch / 2, kernel_size=2, stride=2
+            )
 
     def forward(self, x):
         x = self.up(x)
@@ -259,7 +266,12 @@ class Combine(nn.Module):
         self.conv = nn.Conv2d(2 * in_ch, out_ch, kernel_size=1, stride=1)
 
     def forward(self, x1, x2):
+        # x1.size() < x2.size()
         x1 = self.relu(x1)
-        x = torch.cat((x1, x2), dim=1)
+        diff_h = x2.size()[2] - x1.size()[2]
+        diff_w = x2.size()[3] - x1.size()[3]
+        x1 = F.pad(x1, (int(diff_h / 2), int(diff_h / 2),
+                        int(diff_w / 2), int(diff_w / 2)))
+        x = torch.cat([x1, x2], dim=1)
         x = self.conv(x)
         return x

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 
-import io
 import os
 
 from albumentations import HorizontalFlip, ShiftScaleRotate, Normalize, Resize, Compose, GaussNoise
 from albumentations.pytorch import ToTensor
 import pandas as pd
+from skimage import io
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
@@ -72,7 +72,7 @@ def dataloader(data_folder,
                batch_size=8,
                num_workers=4):
     df = pd.read_csv(df_path)
-    df['ImageId'], df['ClassId'] = zip(*df['ImageId_ClassId'].str.split('_'))
+    #df['ImageId'], df['ClassId'] = zip(*df['ImageId_ClassId'].str.split('_'))
     df['ClassId'] = df['ClassId'].astype(int)
     df = df.pivot(index='ImageId', columns='ClassId', values='EncodedPixels')
     df['defects'] = df.count(axis=1)

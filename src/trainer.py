@@ -12,12 +12,13 @@ from tqdm import tqdm
 
 from dataload import dataloader
 from utils import Meter, epoch_log
+from lossfuncs import DiceLoss, DiceBCELoss, IoULoss, TanimotoLoss
 
 
 class Trainer(object):
     """Trainer class taking care of training and validation"""
 
-    def __init__(self, model):
+    def __init__(self, model, loss='BCE'):
         train_df_path = '../dataset/train.csv'
         data_folder = osp.dirname(train_df_path)
         self.num_workers = 6
@@ -32,7 +33,16 @@ class Trainer(object):
         self.optimizer = optim.Adam(self.net.parameters(), lr=self.lr)
         self.scheduler = ReduceLROnPlateau(
             self.optimizer, mode='min', patience=3, verbose=True)
-        self.criterion = nn.BCEWithLogitsLoss()
+        if loss == 'BCE':
+            self.criterion = nn.BCEWithLogitsLoss()
+        elif loss == 'Dice':
+            self.criterion = DiceLoss()
+        elif loss == 'DiceBCE':
+            self.criterion = DiceBCELoss()
+        elif loss == 'IoU':
+            self.criterion = IoULoss()
+        elif loss == 'Tanimoto':
+            self.criterion = TanimotoLoss()
 
         self.dataloaders = {
             phase: dataloader(
@@ -62,7 +72,7 @@ class Trainer(object):
         meter = Meter(phase, epoch)
         start = time.strftime('%H:%M:%S')
         print("Starting epoch: {} | phase: {} | Time: {}".format(epoch, phase, start))
-        dl = self.dataloader['phase']
+        dl = self.dataloaders[phase]
         running_loss = 0.0
         total_steps = len(dl)
         self.optimizer.zero_grad()
