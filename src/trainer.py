@@ -116,5 +116,5 @@ class Trainer(object):
             if val_loss < self.best_loss:
                 print('******** New optimal found, saving state ********')
                 state['best_loss'] = self.best_loss = val_loss
-                torch.save(state, "./trained_models/model.pth")
+                torch.save(state, "../trained_models/model.pth")
             print()
