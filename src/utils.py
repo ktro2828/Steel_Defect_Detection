@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-from lossfuncs import DiceLoss, DiceBCELoss, IoULoss, TanimotoLoss
-
 
 def _metric(prob, truth, threshold, reduction=None):
     """Calculate dice of positive and negative images separately
@@ -89,7 +87,7 @@ def _compute_iou_batch(outputs, labels, classes=None):
     preds = np.copy(outputs)
     labels = np.array(labels)
     for pred, label in zip(preds, labels):
-        ious.append(no.nanmean(compute_ious(pred, label, classes)))
+        ious.append(np.nanmean(_compute_ious(pred, label, classes)))
     iou = np.nanmean(ious)
 
     return iou
