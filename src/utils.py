@@ -132,3 +132,5 @@ def plot(scores, name):
     plt.ylabel('{}'.format(name))
     plt.legend()
     plt.show()
+    plt.savefig('{}.png'.format(name))
+    plt.close()
