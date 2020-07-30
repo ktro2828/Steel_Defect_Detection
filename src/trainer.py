@@ -45,6 +45,7 @@ class Trainer(object):
             self.criterion = TanimotoLoss()
         else:
             raise Exception('Loss Function is not Defined')
+            return
 
         self.dataloaders = {
             phase: dataloader(
@@ -78,7 +79,7 @@ class Trainer(object):
         running_loss = 0.0
         total_steps = len(dl)
         self.optimizer.zero_grad()
-        for itr, sample in tqdm(enumerate(dl)):
+        for itr, sample in enumerate(tqdm(dl)):
             images = sample['image']
             targets = sample['mask']
             loss, outputs = self._forward(images, targets)
@@ -115,5 +116,5 @@ class Trainer(object):
             if val_loss < self.best_loss:
                 print('******** New optimal found, saving state ********')
                 state['best_loss'] = self.best_loss = val_loss
-                torch.save(state, "./models/model.pth")
+                torch.save(state, "./trained_models/model.pth")
             print()

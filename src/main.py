@@ -14,7 +14,7 @@ from unet import UNet
 from resunet_a import ResUNet_a
 
 
-def main(args):
+def main():
     seed = 1234
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -48,6 +48,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    import sys
-    argv = sys.argv
-    main(argv)
+    main()
