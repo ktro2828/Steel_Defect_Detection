@@ -33,16 +33,19 @@ class Trainer(object):
         self.optimizer = optim.Adam(self.net.parameters(), lr=self.lr)
         self.scheduler = ReduceLROnPlateau(
             self.optimizer, mode='min', patience=3, verbose=True)
-        if loss == 'BCE':
+        if loss == ['BCE']:
             self.criterion = nn.BCEWithLogitsLoss()
-        elif loss == 'Dice':
+        elif loss == ['Dice']:
             self.criterion = DiceLoss()
-        elif loss == 'DiceBCE':
+        elif loss == ['DiceBCE']:
             self.criterion = DiceBCELoss()
-        elif loss == 'IoU':
+        elif loss == ['IoU']:
             self.criterion = IoULoss()
-        elif loss == 'Tanimoto':
+        elif loss == ['Tanimoto']:
             self.criterion = TanimotoLoss()
+        else:
+            print('LOSS FUNCTION UNDIFINED')
+            raise
 
         self.dataloaders = {
             phase: dataloader(
