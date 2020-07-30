@@ -82,7 +82,7 @@ def _compute_ious(pred,
     return ious if ious else [1]
 
 
-def compute_iou_batch(outputs, labels, classes=None):
+def _compute_iou_batch(outputs, labels, classes=None):
     """Compute mean iou for a batch of ground truth masks and predicted masks"""
 
     ious = []
