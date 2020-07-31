@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
 
-import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 import torch
 
 
@@ -83,7 +81,8 @@ def _compute_ious(pred,
 
 
 def _compute_iou_batch(outputs, labels, classes=None):
-    """Compute mean iou for a batch of ground truth masks and predicted masks"""
+    """Compute mean iou for a batch of ground truth masks and predicted masks
+    """
 
     ious = []
     preds = np.copy(outputs)
@@ -131,8 +130,8 @@ class Meter(object):
 def epoch_log(phase, epoch, epoch_loss, meter, start):
     dices, iou = meter.get_metrics()
     dice, dice_neg, dice_pos = dices
-    print("Loss: %0.4f | IoU: %0.4f | dice_neg: %0.4f | dice_pos: %0.4f" %
-          (epoch_loss, dice, dice_neg, dice_pos))
+    print("Loss: %0.4f | IoU: %0.4f | dice: %0.4f | dice_neg: %0.4f | dice_pos: %0.4f" %
+          (epoch_loss, iou, dice, dice_neg, dice_pos))
 
     return dice, iou
 
@@ -152,14 +151,19 @@ def plot(scores, name):
     plt.close()
 
 
-def visualize(image, output, mask):
-    image = image.cpu().detach().numpy()
-    image = np.transpose(image, (2, 0, 1))
-    image = Image.fromarray(image)
+def visualize(sample, outputs, epoch, phase):
+    batch_size = len(sample)
+    images = sample['image'].cpu().detach().numpy()  # (b, 3, 256, 1600)
+    masks = sample['mask'].cpu().detach().numpy()    # (b, 4, 256, 1600)
+    images = np.transpose(images, (0, 2, 3, 1))      # (b, 256, 1600, 3)
+    masks = np.transpose(masks, (0, 2, 3, 1))        # (b, 256, 1600, 4)
 
-    output = output.cpu().detach().numpy() * (-1)
-    thresh = np.mean(output) * 1.2
-    pred = _predict(output, threshold=thresh).cpu().detach().numpy()
-    pred = Image.fromarray(pred)
+    row = batch_size
+    column = 1
+    plt.figure(figsize=(10, 10))
 
-    plt.figure(figsize=(1, 2))
+    num = 0
+    while num < row*column:
+        num += 1
+        plt.subplot(row, column, num)
+    plt.savefig('{}_{}.png'.format(phase, epoch))

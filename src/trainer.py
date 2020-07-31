@@ -11,7 +11,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
 from dataload import dataloader
-from utils import Meter, epoch_log
+from utils import Meter, epoch_log, visualize
 from lossfuncs import DiceLoss, DiceBCELoss, IoULoss, TanimotoLoss
 
 
@@ -94,6 +94,7 @@ class Trainer(object):
             meter.update(targets, outputs)
         epoch_loss = (running_loss * self.accumlation_steps) / total_steps
         dice, iou = epoch_log(phase, epoch, epoch_loss, meter, start)
+        visualize(sample, outputs, epoch, phase)
 
         self.losses[phase].append(epoch_loss)
         self.dice_scores[phase].append(dice)
