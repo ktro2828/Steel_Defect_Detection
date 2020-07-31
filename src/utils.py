@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
 import torch
 
 
@@ -107,6 +109,7 @@ class Meter(object):
         }
 
     def update(self, targets, outputs):
+        outputs = torch.sigmoid(outputs)
         ret = _metric(outputs, targets, self.threshold)
         self.scores['base_dice'].extend(ret['dice'].tolist())
         self.scores['dice_pos'].extend(ret['dice_pos'].tolist())
@@ -138,6 +141,8 @@ def plot(scores, name):
     plt.figure(figsize=(15, 5))
     plt.plot(range(len(scores['train'])),
              scores['train'], label='train{}'.format(name))
+    plt.plot(range(len(scores['train'])),
+             scores['train'], label='val {}'.format(name))
     plt.title('{}plot'.format(name))
     plt.xlabel('Epoch')
     plt.ylabel('{}'.format(name))
@@ -145,3 +150,16 @@ def plot(scores, name):
     plt.show()
     plt.savefig('{}.png'.format(name))
     plt.close()
+
+
+def visualize(image, output, mask):
+    image = image.cpu().detach().numpy()
+    image = np.transpose(image, (2, 0, 1))
+    image = Image.fromarray(image)
+
+    output = output.cpu().detach().numpy() * (-1)
+    thresh = np.mean(output) * 1.2
+    pred = _predict(output, threshold=thresh).cpu().detach().numpy()
+    pred = Image.fromarray(pred)
+
+    plt.figure(figsize=(1, 2))

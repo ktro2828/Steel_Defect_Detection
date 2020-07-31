@@ -3,6 +3,7 @@
 
 import os
 import os.path as osp
+import warnings
 
 import argparse
 import numpy as np
@@ -13,8 +14,11 @@ from trainer import Trainer
 from unet import UNet
 from resunet_a import ResUNet_a
 
+import segmentation_models_pytorch as smp
+
 
 def main():
+    warnings.filterwarnings('ignore')
     seed = 1234
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -23,7 +27,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-l', '--loss', type=str, default='BCE',
                         help='BCE, Dice, BCEDice, IoU, Tanimoto')
-    parser.add_argument('-m', '--model', type=str, default='unet', help='UNet or ResUNet-a')
+    parser.add_argument('-m', '--model', type=str,
+                        default='unet', help='UNet or ResUNet-a')
 
     args = parser.parse_args()
 
@@ -32,6 +37,9 @@ def main():
 
     if args.model == 'unet':
         model = UNet(3, 4)
+    elif args.model == 'resnet':
+        model = smp.Unet('resnet18', encoder_weights='imagenet',
+                         classes=4, activation='None')
     else:
         model = ResUNet_a(3, 4)
 
@@ -42,9 +50,9 @@ def main():
     dice_scores = model_trainer.dice_scores
     iou_scores = model_trainer.iou_scores
 
-    plot(losses, name='{} Loss'.format(args.loss))
-    plot(dice_scores, name='Dice score')
-    plot(iou_scores, name='IoU score')
+    plot(losses, name='{}_Loss'.format(args.loss))
+    plot(dice_scores, name='Dice_score')
+    plot(iou_scores, name='IoU_score')
 
 
 if __name__ == '__main__':

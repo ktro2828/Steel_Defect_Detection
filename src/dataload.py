@@ -9,7 +9,6 @@ import pandas as pd
 from skimage import io
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
 
 from mask_utils import make_mask
 

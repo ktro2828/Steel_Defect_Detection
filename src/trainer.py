@@ -44,7 +44,7 @@ class Trainer(object):
         elif loss == 'Tanimoto':
             self.criterion = TanimotoLoss()
         else:
-            raise Exception('Loss Function is not Defined')
+            raise ValueError('Loss Function is not Defined')
             return
 
         self.dataloaders = {
