@@ -6,7 +6,6 @@ import random
 
 import cv2
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
 from src.mask_utils import rle2mask
@@ -30,8 +29,8 @@ class DataVisualizer(object):
         fig = plt.figure(figsize=(20, 20))
         df = self.df[self.df['EncodedPixels'].notnull()]
         df = df.pivot(index='ImageId',
-                           columns='ClassId',
-                           values='EncodedPixels')
+                      columns='ClassId',
+                      values='EncodedPixels')
         for i in range(1, self.columns * self.rows + 1):
             idx = random.randint(0, len(self.df) - 1)
             fig.add_subplot(self.rows, self.columns, i)

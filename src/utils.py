@@ -141,8 +141,6 @@ def epoch_log(phase, epoch, epoch_loss, meter, start):
 
 
 def plot(scores, name):
-    if osp.exists('../results/') is False:
-        os.makedirs('../results/')
     plt.figure(figsize=(15, 5))
     plt.plot(range(len(scores['train'])),
              scores['train'], label='train{}'.format(name))
@@ -181,8 +179,8 @@ def visualize(sample, outputs, epoch, phase):
     thresh = np.mean(outputs) * 1.2
     outputs = outputs[:, :, ch_idx]
     outputs[outputs < thresh] = 0
-    outpust[outputs > thresh] = 1
-    prdict[outputs == 1, 0] = 255
+    outputs[outputs > thresh] = 1
+    predict[outputs == 1, 0] = 255
 
     fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(4, 30))
 
@@ -195,5 +193,6 @@ def visualize(sample, outputs, epoch, phase):
     ax2.axis('off')
 
     plt.show()
-    plt.savefig('{}_{}.png'.format(phase, epoch))
-    plt.cloes()
+    plt.savefig('../predictions/{}_{}.png'.format(phase, epoch))
+    plt.close()
+    print()

@@ -29,6 +29,8 @@ def main():
 
     if osp.exists('../trained_models') is False:
         os.makedirs('../trained_models')
+    if osp.exists('../predictions') is False:
+        os.makedirs('../predictions')
 
     if args.model == 'unet':
         model = UNet(3, 4)
@@ -45,6 +47,8 @@ def main():
     dice_scores = model_trainer.dice_scores
     iou_scores = model_trainer.iou_scores
 
+    if osp.exists('../results') is False:
+        os.makedirs('../results')
     plot(losses, name='{}_Loss'.format(args.loss))
     plot(dice_scores, name='Dice_score')
     plot(iou_scores, name='IoU_score')
