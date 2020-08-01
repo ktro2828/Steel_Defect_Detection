@@ -167,7 +167,7 @@ def visualize(sample, outputs, epoch, phase):
 
     masks = np.transpose(masks, (0, 2, 3, 1))[idx]
     for ch in range(masks.shape[-1]):
-        if mask[;, ;, ch].any():
+        if mask[:, :, ch].any():
             ch_idx = ch
     masks = masks[:, :, ch_idx]
 
