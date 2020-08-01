@@ -182,7 +182,7 @@ def visualize(sample, outputs, epoch, phase):
     outputs[outputs > thresh] = 1
     predict[outputs == 1, 0] = 255
 
-    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(4, 20))
+    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(20, 4))
 
     ax1.imshow(ground_truth)
     ax1.set_title('Ground Truth')
