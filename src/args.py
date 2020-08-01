@@ -11,6 +11,6 @@ def arg_parser():
                         help='BCE, Dice, BCEDice, IoU, Tanimoto')
     parser.add_argument('-m', '--model', type=str,
                         default='unet',
-                        help='unet, resunet_a or resnet_x-based unet)
+                        help='unet, resunet_a or resnet_x-based unet')
 
     return parser
