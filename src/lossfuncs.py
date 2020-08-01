@@ -13,6 +13,8 @@ class DiceLoss(nn.Module):
         super(DiceLoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1):
+        inputs = F.sigmoid(inputs)
+
         inputs = inputs.view(-1)
         targets = targets.view(-1)
 
@@ -28,6 +30,8 @@ class DiceBCELoss(nn.Module):
         super(DiceBCELoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1):
+        inputs = F.sigmoid(inputs)
+
         inputs = inputs.view(-1)
         targets = targets.view(-1)
 
@@ -45,6 +49,8 @@ class IoULoss(nn.Module):
         super(IoULoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1):
+        inputs = F.sigmoid(inputs)
+
         inputs = inputs.view(-1)
         targets = targets.view(-1)
 
@@ -57,13 +63,32 @@ class IoULoss(nn.Module):
         return 1 - IoU
 
 
+class FocalLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(FocalLoss, self).__init__()
+
+    def forward(self, inputs, targets, alpha=0.8, gamma=2, smooth=1):
+        inputs = F.sigmoid(inputs)
+
+        inputs = inputs.view(-1)
+        targets = targets.view(-1)
+
+        BCE = F.binary_cross_entropy(inputs, targets, reduction='mean')
+        BCE_EXP = torch.exp(-BCE)
+        focal_loss = alpha * (1 - BCE_EXP)**gamma * BCE
+
+        return focal_loss
+
+
 class TanimotoLoss(nn.Module):
     def __init__(self, weight=None, size_average=True):
         super(TanimotoLoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1):
-        inputs = torch.view(-1)
-        targets = torch.view(-1)
+        inputs = F.sigmoid(inputs)
+
+        inputs = inputs.view(-1)
+        targets = inputs.view(-1)
         square_i = torch.square(inputs)
         square_t = torch.square(targets)
         square_sum = (square_i + square_t).sum()

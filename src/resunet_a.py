@@ -28,7 +28,7 @@ class ResUNet_a(nn.Module):
         self.block5 = ResBlock_a(512, dilations=1)
         self.conv6 = nn.Conv2d(512, 1024, kernel_size=1, stride=2)
         self.block6 = ResBlock_a(1024, dilations=1)
-        self.psppool1 = PSPPool(1024)
+        self.psppool1 = PSPPool(1024, outsize=(8, 50))
         self.up1 = Upsampling(512)
         self.comb1 = Combine(512)
         self.up_block1 = ResBlock_a(512, dilations=1)
@@ -47,7 +47,6 @@ class ResUNet_a(nn.Module):
         self.comb6 = Combine(32)
         self.psppool2 = PSPPool(32)
         self.conv_out = nn.Conv2d(32, n_classes, kernel_size=1, stride=1)
-        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         c1 = x = self.conv1(x)
@@ -81,7 +80,6 @@ class ResUNet_a(nn.Module):
         x = self.comb6(x, c1)
         x = self.psppool2(x)
         x = self.conv_out(x)
-        x = self.softmax(x)
 
         return x
 
@@ -165,7 +163,7 @@ class PSPPool(nn.Module):
             scale factors for PSPPooling
     """
 
-    def __init__(self, out_ch, in_ch=None, scales=(1, 2, 4, 8)):
+    def __init__(self, out_ch, in_ch=None, scales=(1, 2, 4, 8), outsize=None):
         super(PSPPool, self).__init__()
         if in_ch is None:
             in_ch = out_ch
@@ -173,22 +171,23 @@ class PSPPool(nn.Module):
             scales = tuple((scales,))
         self.scales = scales
         self.psppool = nn.ModuleList([
-            self._build(in_ch, out_ch, s) for s in self.scales
+            self._build(in_ch, out_ch, s, outsize) for s in self.scales
         ])
         self.conv = nn.Conv2d(2*in_ch, out_ch, kernel_size=1, stride=1)
         self.shortcut = self._shortcut(in_ch, out_ch)
 
     def forward(self, x):
-        output = list(self.shortcut(x))
+        output = []
+        output.append(self.shortcut(x))
         for block in self.psppool:
             output.append(block(x))
         x = torch.cat(output, dim=1)
         x = self.conv(x)
         return x
 
-    def _build(self, in_ch, out_ch, s):
+    def _build(self, in_ch, out_ch, s, outsize):
         out_ch = int(out_ch / len(self.scales))
-        return PSPBlock(in_ch, out_ch, s)
+        return PSPBlock(in_ch, out_ch, s, outsize)
 
     def _shortcut(self, in_ch, out_ch):
         if in_ch != out_ch:
@@ -209,12 +208,16 @@ class PSPBlock(nn.Module):
         s(int): scale factor for filter
     """
 
-    def __init__(self, in_ch, out_ch, s):
+    def __init__(self, in_ch, out_ch, s, outsize=None):
         super(PSPBlock, self).__init__()
+        if outsize is None:
+            scale = s
+        else:
+            scale = None
         self.block = nn.Sequential(
             nn.MaxPool2d(kernel_size=s),
             nn.Conv2d(in_ch, out_ch, kernel_size=1),
-            nn.Upsample(scale_factor=s),
+            nn.Upsample(size=outsize, scale_factor=scale),
         )
 
     def forward(self, x):

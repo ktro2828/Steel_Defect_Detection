@@ -4,13 +4,15 @@
 import numpy as np
 
 
-def make_mask(row_idx, df):
+def rle2mask(row_idx, df):
     """Given a row index, return image_id and mask (256, 1600, 4)
         from the data frame
 
     Args:
         row_idx(int): index of target image
-        df(dataframe)
+        df(dataframe): df = df.pivot(indexs='ImageId',
+                                     columns='ClassId',
+                                     values='EncodedPixels')
     """
     image_id = df.iloc[row_idx].name
     labels = df.iloc[row_idx][:4]

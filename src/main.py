@@ -5,10 +5,10 @@ import os
 import os.path as osp
 import warnings
 
-import argparse
 import numpy as np
 import torch
 
+from args import arg_parser
 from utils import plot
 from trainer import Trainer
 from unet import UNet
@@ -24,12 +24,7 @@ def main():
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-l', '--loss', type=str, default='BCE',
-                        help='BCE, Dice, BCEDice, IoU, Tanimoto')
-    parser.add_argument('-m', '--model', type=str,
-                        default='unet', help='UNet or ResUNet-a')
-
+    parser = arg_parser()
     args = parser.parse_args()
 
     if osp.exists('../trained_models') is False:
@@ -37,11 +32,11 @@ def main():
 
     if args.model == 'unet':
         model = UNet(3, 4)
-    elif args.model == 'resnet':
-        model = smp.Unet('resnet18', encoder_weights='imagenet',
-                         classes=4, activation='None')
-    else:
+    elif args.model == 'resunet_a':
         model = ResUNet_a(3, 4)
+    else:
+        model = smp.Unet(args.model, encoder_weights='imagenet',
+                         classes=4, activation='None')
 
     model_trainer = Trainer(model, loss=args.loss)
     model_trainer.start()

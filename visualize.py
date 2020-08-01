@@ -7,7 +7,7 @@ import cv2
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from src.mask_utils import make_mask
+from src.mask_utils import rle2mask
 
 
 class DataVisualizer(object):
@@ -18,26 +18,27 @@ class DataVisualizer(object):
         self.df_path = osp.join(self.root, 'train.csv')
         self.train_path = osp.join(self.root, 'train_images/')
         self.df = pd.read_csv(self.df_path)
-        self.classes = (1, 2, 3, 4)
+        self.columns = 1
+        self.rows = 4
 
     def datasize(self):
         df = self.df[self.df['EncodedPixels'].notnull()]
         print('NUM DATAs: {}'.format(df.shape[0]))
 
-    def imshow(self):
+    def display(self):
         fig = plt.figure(figsize=(20, 20))
-        for i in range(1, 20 + 1):
-            fig.add_subplot(10, 2, 1)
+        for i in range(1, self.columns*self.rows+1):
+            fig.add_subplot(self.rows, self.columns, i).
 
-            image_id, mask = make_mask(i, self.df)
-            path = osp.join(self.train_path, img_id)
-            img = cv2.imread(path)
+            image_id, mask = rle2mask(i, self.df)
+            img_path = osp.join(self.train_path, img_id)
+            img = cv2.imread(img_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img[mask==1,0] = 255
-
+            img[mask == 1, 0] = 255
             plt.imshow(img)
 
         plt.show()
+
 
 def main():
     visualizer = DataVisualizer()

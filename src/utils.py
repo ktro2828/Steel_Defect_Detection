@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+import os.path as osp
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -137,6 +139,8 @@ def epoch_log(phase, epoch, epoch_loss, meter, start):
 
 
 def plot(scores, name):
+    if osp.exists('../results/') is False:
+        os.makedirs('../results/')
     plt.figure(figsize=(15, 5))
     plt.plot(range(len(scores['train'])),
              scores['train'], label='train{}'.format(name))
@@ -147,7 +151,7 @@ def plot(scores, name):
     plt.ylabel('{}'.format(name))
     plt.legend()
     plt.show()
-    plt.savefig('{}.png'.format(name))
+    plt.savefig('../results/{}.png'.format(name))
     plt.close()
 
 
@@ -157,13 +161,14 @@ def visualize(sample, outputs, epoch, phase):
     masks = sample['mask'].cpu().detach().numpy()    # (b, 4, 256, 1600)
     images = np.transpose(images, (0, 2, 3, 1))      # (b, 256, 1600, 3)
     masks = np.transpose(masks, (0, 2, 3, 1))        # (b, 256, 1600, 4)
+    outputs = torch.sigmoid(outputs)
+    outputs = np.copy(outputs)
 
-    row = batch_size
-    column = 1
-    plt.figure(figsize=(10, 10))
+    rows = batch_size
+    columns = 2
+    fig = plt.figure(figsize=(20, colmns*rows+6))
 
-    num = 0
-    while num < row*column:
-        num += 1
-        plt.subplot(row, column, num)
+    for i in range(1, columns*rows+1):
+        fig.add_subplot()
+
     plt.savefig('{}_{}.png'.format(phase, epoch))

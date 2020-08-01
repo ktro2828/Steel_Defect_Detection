@@ -12,15 +12,15 @@ from tqdm import tqdm
 
 from dataload import dataloader
 from utils import Meter, epoch_log, visualize
-from lossfuncs import DiceLoss, DiceBCELoss, IoULoss, TanimotoLoss
+from lossfuncs import DiceLoss, DiceBCELoss, IoULoss, FocalLoss, TanimotoLoss
 
 
 class Trainer(object):
     """Trainer class taking care of training and validation"""
 
     def __init__(self, model, loss='DiceBCE'):
-        train_df_path = '../dataset/train.csv'
-        data_folder = osp.dirname(train_df_path)
+        df_path = '../dataset/train.csv'
+        root = osp.dirname(df_path)
         self.num_workers = 6
         self.batch_size = {'train': 4, 'val': 4}
         self.accumlation_steps = 32 // self.batch_size['train']
@@ -41,6 +41,8 @@ class Trainer(object):
             self.criterion = DiceBCELoss()
         elif loss == 'IoU':
             self.criterion = IoULoss()
+        elif loss == 'Focal':
+            self.criterion = FocalLoss()
         elif loss == 'Tanimoto':
             self.criterion = TanimotoLoss()
         else:
@@ -49,11 +51,9 @@ class Trainer(object):
 
         self.dataloaders = {
             phase: dataloader(
-                data_folder=data_folder,
-                df_path=train_df_path,
+                root=root,
+                df_path=df_path,
                 phase=phase,
-                mean=(0.485, 0.456, 0.406),
-                std=(0.229, 0.224, 0.225),
                 batch_size=self.batch_size[phase],
                 num_workers=self.num_workers
             )
