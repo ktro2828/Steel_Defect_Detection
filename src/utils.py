@@ -6,6 +6,7 @@ import random
 
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
 import torch
 
 
@@ -161,41 +162,34 @@ def visualize(sample, outputs, epoch, phase):
     idx = random.randint(0, batch_size - 1)
     images = sample['image'].cpu().detach().numpy()  # (b, 3, 256, 1600)
     masks = sample['mask'].cpu().detach().numpy()    # (b, 4, 256, 1600)
-    images = np.transpose(images, (0, 2, 3, 1))[idx]      # (b, 256, 1600, 3)
-    masks = np.transpose(masks, (0, 2, 3, 1))[idx]        # (b, 256, 1600, 4)
+
+    images = np.transpose(images, (0, 2, 3, 1))[idx]      # (256, 1600, 3)
+
+    masks = np.transpose(masks, (0, 2, 3, 1))[idx]         # (256, 1600, 4)
+    masks = np.sum(masks, axis=-1)
+
     ground_truth = images.copy()
     ground_truth[masks == 1, 0] = 255
+
+    predict = images.copy()
     outputs = torch.sigmoid(outputs)
     outputs = outputs.cpu().detach().numpy()
     outputs = np.transpose(outputs, (0, 2, 3, 1))[idx]
-    predict = images.copy()
-    predict[outputs == 1, 0] = 255
+    thresh = np.mean(outputs) * 1.2
+    outputs[outputs < thresh] = 0
+    outpust[outputs > thresh] = 1
+    outputs = np.sum(outputs, axis=-1)
+    prdict[outputs == 1, 0] = 255
 
-    rows = 1
-    cols = 2
-    fig, (ax1, ax2) = plt.subplots(ncols=cols, figsize=(20, rows * cols + 6))
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 4))
 
     ax1.imshow(ground_truth)
     ax1.title('Ground Truth')
-    ax1.tick_params(labelbottom=False,
-                    labelleft=False,
-                    labelright=False,
-                    labeltop=False,
-                    bottom=False,
-                    left=False,
-                    right=False,
-                    top=False)
+    ax1.axis('off')
 
     ax2.imshow(predict)
     ax2.title('Prediction')
-    ax2.tick_params(labelbottom=False,
-                    labelleft=False,
-                    labelright=False,
-                    labeltop=False,
-                    bottom=False,
-                    left=False,
-                    right=False,
-                    top=False)
+    ax2.axis('off')
 
     plt.show()
     plt.savefig('{}_{}.png'.format(phase, epoch))
