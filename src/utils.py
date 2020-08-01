@@ -195,4 +195,4 @@ def visualize(sample, outputs, epoch, phase):
     plt.show()
     plt.savefig('../predictions/{}_{}.png'.format(phase, epoch))
     plt.close()
-    print('******Saving predicted image******')
+    print('******Saving {} image******'.format(phase))
