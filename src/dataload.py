@@ -33,11 +33,7 @@ class SteelDataManager(Dataset):
         self.root = root
         self.df = df
         self.phase = phase
-
-        if self.phase == 'train':
-            self.data_path = osp.join(self.root, 'train_images/')
-        if self.phase == 'test':
-            self.data_path = osp.join(self.root, 'test_images/')
+        self.data_path = osp.join(self.root, 'train_images/')
         self.transforms = get_transforms(phase)
 
     def __getitem__(self, idx):
