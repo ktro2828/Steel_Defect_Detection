@@ -185,14 +185,14 @@ def visualize(sample, outputs, epoch, phase):
     fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(4, 30))
 
     ax1.imshow(ground_truth)
-    ax1.title('Ground Truth')
+    ax1.set_title('Ground Truth')
     ax1.axis('off')
 
     ax2.imshow(predict)
-    ax2.title('Prediction')
+    ax2.set_title('Prediction')
     ax2.axis('off')
 
     plt.show()
     plt.savefig('../predictions/{}_{}.png'.format(phase, epoch))
     plt.close()
-    print()
+    print('******Saving predicted image******')
