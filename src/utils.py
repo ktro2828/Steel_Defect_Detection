@@ -160,13 +160,16 @@ def plot(scores, name):
 def visualize(sample, outputs, epoch, phase):
     batch_size = len(sample)
     idx = random.randint(0, batch_size - 1)
-    images = sample['image'].cpu().detach().numpy()  # (b, 3, 256, 1600)
-    masks = sample['mask'].cpu().detach().numpy()    # (b, 4, 256, 1600)
+    images = sample['image'].cpu().detach().numpy()
+    masks = sample['mask'].cpu().detach().numpy()
 
-    images = np.transpose(images, (0, 2, 3, 1))[idx]      # (256, 1600, 3)
+    images = np.transpose(images, (0, 2, 3, 1))[idx]
 
-    masks = np.transpose(masks, (0, 2, 3, 1))[idx]         # (256, 1600, 4)
-    masks = np.sum(masks, axis=-1)
+    masks = np.transpose(masks, (0, 2, 3, 1))[idx]
+    for ch in range(masks.shape[-1]):
+        if mask[;, ;, ch].any():
+            ch_idx = ch
+    masks = masks[:, :, ch_idx]
 
     ground_truth = images.copy()
     ground_truth[masks == 1, 0] = 255
@@ -176,9 +179,9 @@ def visualize(sample, outputs, epoch, phase):
     outputs = outputs.cpu().detach().numpy()
     outputs = np.transpose(outputs, (0, 2, 3, 1))[idx]
     thresh = np.mean(outputs) * 1.2
+    outputs = outputs[:, :, ch_idx]
     outputs[outputs < thresh] = 0
     outpust[outputs > thresh] = 1
-    outputs = np.sum(outputs, axis=-1)
     prdict[outputs == 1, 0] = 255
 
     fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 4))

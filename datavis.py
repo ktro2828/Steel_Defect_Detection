@@ -22,7 +22,6 @@ class DataVisualizer(object):
         self.df = pd.read_csv(self.df_path)
         self.columns = 1
         self.rows = 4
-        self.classes = 4
 
     def datasize(self):
         print('NUM DATA: {}'.format(self.df.shape[0]))
@@ -41,7 +40,7 @@ class DataVisualizer(object):
             img_path = osp.join(self.train_path, image_id)
             img = cv2.imread(img_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            for ch in range(self.classes):
+            for ch in range(mask.shape[-1]):
                 if mask[:, :, ch].any():
                     idx = ch
             mask = mask[:, :, idx]
