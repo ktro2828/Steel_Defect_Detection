@@ -2,6 +2,7 @@
 
 import os
 import os.path as osp
+import random
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -157,18 +158,45 @@ def plot(scores, name):
 
 def visualize(sample, outputs, epoch, phase):
     batch_size = len(sample)
+    idx = random.randint(0, batch_size - 1)
     images = sample['image'].cpu().detach().numpy()  # (b, 3, 256, 1600)
     masks = sample['mask'].cpu().detach().numpy()    # (b, 4, 256, 1600)
-    images = np.transpose(images, (0, 2, 3, 1))      # (b, 256, 1600, 3)
-    masks = np.transpose(masks, (0, 2, 3, 1))        # (b, 256, 1600, 4)
+    images = np.transpose(images, (0, 2, 3, 1))[idx]      # (b, 256, 1600, 3)
+    masks = np.transpose(masks, (0, 2, 3, 1))[idx]        # (b, 256, 1600, 4)
+    ground_truth = images.copy()
+    ground_truth[masks == 1, 0] = 255
     outputs = torch.sigmoid(outputs)
-    outputs = np.copy(outputs)
+    outputs = outputs.cpu().detach().numpy()
+    outputs = np.transpose(outputs, (0, 2, 3, 1))[idx]
+    predict = images.copy()
+    predict[outputs == 1, 0] = 255
 
-    rows = batch_size
-    columns = 2
-    fig = plt.figure(figsize=(20, colmns*rows+6))
+    rows = 1
+    cols = 2
+    fig, (ax1, ax2) = plt.subplots(ncols=cols, figsize=(20, rows * cols + 6))
 
-    for i in range(1, columns*rows+1):
-        fig.add_subplot()
+    ax1.imshow(ground_truth)
+    ax1.title('Ground Truth')
+    ax1.tick_params(labelbottom=False,
+                    labelleft=False,
+                    labelright=False,
+                    labeltop=False,
+                    bottom=False,
+                    left=False,
+                    right=False,
+                    top=False)
 
+    ax2.imshow(predict)
+    ax2.title('Prediction')
+    ax2.tick_params(labelbottom=False,
+                    labelleft=False,
+                    labelright=False,
+                    labeltop=False,
+                    bottom=False,
+                    left=False,
+                    right=False,
+                    top=False)
+
+    plt.show()
     plt.savefig('{}_{}.png'.format(phase, epoch))
+    plt.cloes()
