@@ -167,7 +167,7 @@ def visualize(sample, outputs, epoch, phase):
 
     masks = np.transpose(masks, (0, 2, 3, 1))[idx]
     for ch in range(masks.shape[-1]):
-        if mask[:, :, ch].any():
+        if masks[:, :, ch].any():
             ch_idx = ch
     masks = masks[:, :, ch_idx]
 
@@ -184,7 +184,7 @@ def visualize(sample, outputs, epoch, phase):
     outpust[outputs > thresh] = 1
     prdict[outputs == 1, 0] = 255
 
-    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 4))
+    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(4, 30))
 
     ax1.imshow(ground_truth)
     ax1.title('Ground Truth')
