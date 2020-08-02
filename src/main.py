@@ -38,7 +38,7 @@ def main():
         model = ResUNet_a(3, 4)
     else:
         model = smp.Unet(args.model, encoder_weights='imagenet',
-                         classes=4, activation='None')
+                         classes=4, activation=None)
 
     model_trainer = Trainer(model, loss=args.loss)
     model_trainer.start()
