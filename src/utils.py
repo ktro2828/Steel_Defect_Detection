@@ -6,6 +6,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+import torch.nn.functional as F
 
 
 def _metric(prob, truth, threshold, reduction=None):
@@ -111,6 +112,7 @@ class Meter(object):
 
     def update(self, targets, outputs):
         #outputs = torch.sigmoid(outputs)
+        outputs = F.softmax(outputs)
         ret = _metric(outputs, targets, self.threshold)
         self.scores['base_dice'].extend(ret['dice'].tolist())
         self.scores['dice_pos'].extend(ret['dice_pos'].tolist())
@@ -171,10 +173,11 @@ def visualize(sample, outputs, epoch, phase):
     ground_truth[masks == 1, 0] = 255
 
     predict = images.copy()
-    outputs = torch.sigmoid(outputs)
+    # outputs = torch.sigmoid(outputs)
     outputs = outputs.cpu().detach().numpy()
     outputs = np.transpose(outputs, (0, 2, 3, 1))[idx]
-    thresh = np.mean(outputs) * 1.2
+    # thresh = np.mean(outputs) * 1.2
+    thresh = 0.5
     outputs = outputs[:, :, ch_idx]
     outputs[outputs < thresh] = 0
     outputs[outputs > thresh] = 1

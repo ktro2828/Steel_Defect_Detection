@@ -88,7 +88,7 @@ class TanimotoLoss(nn.Module):
         #inputs = F.softmax(inputs)
 
         inputs = inputs.view(-1)
-        targets = inputs.view(-1)
+        targets = targets.view(-1)
         sum_square = torch.square(inputs).sum()
         sum_product = (inputs * targets).sum()
         denominator = (smooth + sum_square) - sum_product
