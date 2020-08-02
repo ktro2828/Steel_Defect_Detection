@@ -144,8 +144,8 @@ def plot(scores, name):
     plt.figure(figsize=(15, 5))
     plt.plot(range(len(scores['train'])),
              scores['train'], label='train{}'.format(name))
-    plt.plot(range(len(scores['train'])),
-             scores['train'], label='val {}'.format(name))
+    plt.plot(range(len(scores['val'])),
+             scores['val'], label='val {}'.format(name))
     plt.title('{}plot'.format(name))
     plt.xlabel('Epoch')
     plt.ylabel('{}'.format(name))
@@ -182,7 +182,7 @@ def visualize(sample, outputs, epoch, phase):
     outputs[outputs > thresh] = 1
     predict[outputs == 1, 0] = 255
 
-    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(20, 4))
+    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(15, 8))
 
     ax1.imshow(ground_truth)
     ax1.set_title('Ground Truth')
