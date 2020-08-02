@@ -112,7 +112,7 @@ class Meter(object):
 
     def update(self, targets, outputs):
         #outputs = torch.sigmoid(outputs)
-        outputs = F.softmax(outputs)
+        #outputs = F.softmax(outputs)
         ret = _metric(outputs, targets, self.threshold)
         self.scores['base_dice'].extend(ret['dice'].tolist())
         self.scores['dice_pos'].extend(ret['dice_pos'].tolist())
