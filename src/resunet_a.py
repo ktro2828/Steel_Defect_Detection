@@ -106,11 +106,13 @@ class ResBlock_a(nn.Module):
         self.shortcut = self._shortcut(in_ch, out_ch)
 
     def forward(self, x):
-        h = 0
-        h = self.shortcut(x)
+        out = []
+        out.append(self.shortcut(x))
         for block in self.resblock:
-            h += block(x)
-        return h
+            out.append(block(x))
+        out = torch.stack(out)
+        out = out.sum(dim=0)
+        return out
 
     def _build(self, in_ch, out_ch, d):
         if in_ch is None:
