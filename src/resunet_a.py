@@ -106,6 +106,7 @@ class ResBlock_a(nn.Module):
         self.shortcut = self._shortcut(in_ch, out_ch)
 
     def forward(self, x):
+        h = 0
         h = self.shortcut(x)
         for block in self.resblock:
             h += block(x)
