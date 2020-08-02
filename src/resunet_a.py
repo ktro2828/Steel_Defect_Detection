@@ -268,7 +268,7 @@ class Combine(nn.Module):
         super(Combine, self).__init__()
         if in_ch is None:
             in_ch = out_ch
-        self.relu = nn.ReLU(inplace=False)
+        self.relu = nn.ReLU(inplace=True)
         self.conv = nn.Conv2d(2 * in_ch, out_ch, kernel_size=1, stride=1)
 
     def forward(self, x1, x2):

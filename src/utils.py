@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
-import os
-import os.path as osp
+
 import random
 
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 import torch
 
 
