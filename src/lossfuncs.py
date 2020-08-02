@@ -67,7 +67,7 @@ class FocalLoss(nn.Module):
     def __init__(self, weight=None, size_average=True):
         super(FocalLoss, self).__init__()
 
-    def forward(self, inputs, targets, alpha=0.8, gamma=2, smooth=1):
+    def forward(self, inputs, targets, alpha=0.8, gamma=2):
         inputs = F.sigmoid(inputs)
 
         inputs = inputs.view(-1)
@@ -84,8 +84,8 @@ class TanimotoLoss(nn.Module):
     def __init__(self, weight=None, size_average=True):
         super(TanimotoLoss, self).__init__()
 
-    def forward(self, inputs, targets, smooth=1):
-        inputs = F.sigmoid(inputs)
+    def forward(self, inputs, targets):
+        inputs = F.softmax(inputs)
 
         inputs = inputs.view(-1)
         targets = inputs.view(-1)
@@ -95,6 +95,6 @@ class TanimotoLoss(nn.Module):
         intersection = (inputs * targets).sum()
         denominator = square_sum + intersection
 
-        tanimoto = (intersection + smooth) / (denominator + smooth)
+        tanimoto = intersection / denominator
 
         return 1 - tanimoto
