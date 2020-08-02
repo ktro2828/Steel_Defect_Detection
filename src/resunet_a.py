@@ -139,11 +139,11 @@ class Block(nn.Module):
         super(Block, self).__init__()
         self.block = nn.Sequential(
             nn.BatchNorm2d(in_ch),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.Conv2d(in_ch, out_ch, kernel_size=3,
                       stride=1, padding=d, dilation=d),
             nn.BatchNorm2d(out_ch),
-            nn.ReLU(inplace=True),
+            nn.ReLU(inplace=False),
             nn.Conv2d(out_ch, out_ch, kernel_size=3,
                       stride=1, padding=d, dilation=d)
         )
@@ -178,11 +178,9 @@ class PSPPool(nn.Module):
 
     def forward(self, x):
         output = []
-        x_short = self.shortcut(x)
-        output.append(x_short)
+        output.append(self.shortcut(x))
         for block in self.psppool:
-            h = block(x)
-            output.append(h)
+            output.append(block(x))
         x = torch.cat(output, dim=1)
         x = self.conv(x)
         return x
@@ -267,7 +265,7 @@ class Combine(nn.Module):
         super(Combine, self).__init__()
         if in_ch is None:
             in_ch = out_ch
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.ReLU(inplace=False)
         self.conv = nn.Conv2d(2 * in_ch, out_ch, kernel_size=1, stride=1)
 
     def forward(self, x1, x2):
