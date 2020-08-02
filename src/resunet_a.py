@@ -47,6 +47,7 @@ class ResUNet_a(nn.Module):
         self.comb6 = Combine(32)
         self.psppool2 = PSPPool(32)
         self.conv_out = nn.Conv2d(32, n_classes, kernel_size=1, stride=1)
+        self.softxmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         c1 = x = self.conv1(x)
@@ -80,6 +81,7 @@ class ResUNet_a(nn.Module):
         x = self.comb6(x, c1)
         x = self.psppool2(x)
         x = self.conv_out(x)
+        x = self.softxmax(x)
 
         return x
 

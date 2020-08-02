@@ -85,7 +85,7 @@ class TanimotoLoss(nn.Module):
         super(TanimotoLoss, self).__init__()
 
     def forward(self, inputs, targets):
-        inputs = F.softmax(inputs)
+        #inputs = F.softmax(inputs)
 
         inputs = inputs.view(-1)
         targets = inputs.view(-1)
