@@ -178,9 +178,11 @@ class PSPPool(nn.Module):
 
     def forward(self, x):
         output = []
-        output.append(self.shortcut(x))
+        x_short = self.shortcut(x)
+        output.append(x_short)
         for block in self.psppool:
-            output.append(block(x))
+            h = block(x)
+            output.append(h)
         x = torch.cat(output, dim=1)
         x = self.conv(x)
         return x
