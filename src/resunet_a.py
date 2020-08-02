@@ -28,7 +28,7 @@ class ResUNet_a(nn.Module):
         self.block5 = ResBlock_a(512, dilations=1)
         self.conv6 = nn.Conv2d(512, 1024, kernel_size=1, stride=2)
         self.block6 = ResBlock_a(1024, dilations=1)
-        self.psppool1 = PSPPool(1024, outsize=(8, 50))
+        self.psppool1 = PSPPool(1024)
         self.up1 = Upsampling(512)
         self.comb1 = Combine(512)
         self.up_block1 = ResBlock_a(512, dilations=1)
@@ -47,6 +47,7 @@ class ResUNet_a(nn.Module):
         self.comb6 = Combine(32)
         self.psppool2 = PSPPool(32)
         self.conv_out = nn.Conv2d(32, n_classes, kernel_size=1, stride=1)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         c1 = x = self.conv1(x)
@@ -80,6 +81,7 @@ class ResUNet_a(nn.Module):
         x = self.comb6(x, c1)
         x = self.psppool2(x)
         x = self.conv_out(x)
+        x = self.sigmoid(x)
 
         return x
 

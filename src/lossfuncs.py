@@ -85,7 +85,7 @@ class TanimotoLoss(nn.Module):
         super(TanimotoLoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1):
-        inputs = F.sigmoid(inputs)
+        #inputs = F.sigmoid(inputs)
 
         inputs = inputs.view(-1)
         targets = inputs.view(-1)

@@ -7,7 +7,7 @@ albumentations:
 
 import os.path as osp
 
-from albumentations import HorizontalFlip, Normalize, Compose
+from albumentations import HorizontalFlip, Normalize, Compose, RandomCrop
 from albumentations.pytorch import ToTensor
 import pandas as pd
 from skimage import io
@@ -56,7 +56,8 @@ class SteelDataManager(Dataset):
 def get_transforms(phase):
     tf_list = []
     if phase == 'train':
-        tf_list.extend([HorizontalFlip(p=0.5)])
+        tf_list.extend([HorizontalFlip(p=0.5),
+                        RandomCrop(size=(256, 256))])
     tf_list.extend([
         Normalize(mean=(0.485, 0.456, 0.406),
                   std=(0.229, 0.224, 0.225), p=1),
