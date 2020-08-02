@@ -9,13 +9,12 @@ python3 ./datavis.py
 ```
 
 # Training
-you can choose following models and loss functions
-please type following keywords in ()
+you can choose following models and loss functions, please type following keywords in ()
 
 models : -m (default = unet)
 - UNet (unet)
 - ResNet-based Unet (resnetx: x is num layers of ResNet)
-- ResUNet-a ()
+- ResUNet-a (resunet-a)
 
 ```
 -m <MODEL NAME>
