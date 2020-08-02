@@ -22,7 +22,7 @@ class Trainer(object):
         df_path = '../dataset/train.csv'
         root = osp.dirname(df_path)
         self.num_workers = 6
-        self.batch_size = {'train': 6, 'val': 6}
+        self.batch_size = {'train': 5, 'val': 5}
         self.accumlation_steps = 32 // self.batch_size['train']
         self.lr = 5e-4
         self.num_epochs = 20
