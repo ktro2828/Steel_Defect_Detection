@@ -28,7 +28,7 @@ class ResUNet_a(nn.Module):
         self.block5 = ResBlock_a(512, dilations=1)
         self.conv6 = nn.Conv2d(512, 1024, kernel_size=1, stride=2)
         self.block6 = ResBlock_a(1024, dilations=1)
-        self.psppool1 = PSPPool(1024)
+        self.psppool1 = PSPPool(1024, outsize=(8, 50))
         self.up1 = Upsampling(512)
         self.comb1 = Combine(512)
         self.up_block1 = ResBlock_a(512, dilations=1)
