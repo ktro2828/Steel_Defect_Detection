@@ -157,6 +157,8 @@ def plot(scores, name):
 
 
 def visualize(sample, outputs, epoch, phase):
+    if phase == 'val':
+        return
     batch_size = len(sample)
     idx = random.randint(0, batch_size - 1)
     images = sample['image'].cpu().detach().numpy()
