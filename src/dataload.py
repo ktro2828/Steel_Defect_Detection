@@ -60,7 +60,6 @@ def get_transforms(phase):
     tf_list.extend([
         Normalize(mean=(0.485, 0.456, 0.406),
                   std=(0.229, 0.224, 0.225), p=1),
-        RandomCrop(height=256, width=256),
         ToTensor()
     ])
     trans = Compose(tf_list)
