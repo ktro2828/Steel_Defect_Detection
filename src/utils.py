@@ -157,8 +157,7 @@ def plot(scores, name):
 
 
 def visualize(sample, outputs, epoch, phase):
-    if phase == 'val':
-        return
+    ch_idx = None
     batch_size = len(sample)
     idx = random.randint(0, batch_size - 1)
     images = sample['image'].cpu().detach().numpy()
@@ -170,20 +169,23 @@ def visualize(sample, outputs, epoch, phase):
     for ch in range(masks.shape[-1]):
         if masks[:, :, ch].any():
             ch_idx = ch
+    if ch_idx is None:
+        print('*******Mask is None*******')
+        return
     masks = masks[:, :, ch_idx]
 
     ground_truth = images.copy()
     ground_truth[masks == 1, 0] = 255
 
     predict = images.copy()
-    # outputs = torch.sigmoid(outputs)
+
     outputs = outputs.cpu().detach().numpy()
     outputs = np.transpose(outputs, (0, 2, 3, 1))[idx]
     thresh = np.mean(outputs) * 1.2
-    # thresh = 0.5
+
     outputs = outputs[:, :, ch_idx]
-    outputs[outputs < thresh] = 0
-    outputs[outputs > thresh] = 1
+    outputs[outputs < thresh, 0] = 0
+    outputs[outputs > thresh, 0] = 1
     predict[outputs == 1, 0] = 255
 
     fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(15, 8))
