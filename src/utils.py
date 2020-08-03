@@ -163,7 +163,8 @@ def visualize(sample, outputs, epoch, phase):
     masks = sample['mask'].cpu().detach().numpy()
 
     batch_size = images.shape[0]
-    idx = random.randint(0, batch_size - 1)
+    # idx = random.randint(0, batch_size - 1)
+    idx = 0
 
     images = np.transpose(images, (0, 2, 3, 1))[idx]
     masks = np.transpose(masks, (0, 2, 3, 1))[idx]

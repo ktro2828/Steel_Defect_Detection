@@ -91,11 +91,14 @@ class TanimotoLoss(nn.Module):
         targets = targets.view(-1)
 
         square_i = torch.square(inputs)
-        square_t = torch.square(targets)
+        # square_t = torch.square(targets)
 
+        sum_square = square_i.sum()
         sum_product = (inputs * targets).sum()
-        denominator = (square_i + square_t).sum() - sum_product
-
-        tanimoto = (sum_product + smooth) / (denominator + smooth)
+        # denominator = (square_i + square_t).sum() - sum_product
+        denominator = smooth + sum_square - sum_product
+        # tanimoto = (sum_product + smooth) / (denominator + smooth)
+        tanimoto = sum_product / denominator
+        tanimoto = tanimoto.mean()
 
         return 1 - tanimoto
