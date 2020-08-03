@@ -112,8 +112,8 @@ class Meter(object):
         }
 
     def update(self, targets, outputs):
-        #outputs = torch.sigmoid(outputs)
-        #outputs = F.softmax(outputs)
+        # outputs = torch.sigmoid(outputs)
+        # outputs = F.softmax(outputs)
         ret = _metric(outputs, targets, self.threshold)
         self.scores['base_dice'].extend(ret['dice'].tolist())
         self.scores['dice_pos'].extend(ret['dice_pos'].tolist())
@@ -185,8 +185,8 @@ def visualize(sample, outputs, epoch, phase):
     thresh = np.mean(outputs) * 1.2
 
     outputs = outputs[:, :, ch_idx]
-    outputs[outputs < thresh, 0] = 0
-    outputs[outputs > thresh, 0] = 1
+    outputs[outputs < thresh] = 0
+    outputs[outputs > thresh] = 1
     predict[outputs == 1, 0] = 255
 
     fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(15, 8))
