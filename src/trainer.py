@@ -34,7 +34,7 @@ class Trainer(object):
         self.scheduler = ReduceLROnPlateau(
             self.optimizer, mode='min', patience=3, verbose=True)
         if loss == 'BCE':
-            self.criterion = nn.BCEWithLogitsLoss()
+            self.criterion = nn.BCELoss()
         elif loss == 'Dice':
             self.criterion = DiceLoss()
         elif loss == 'DiceBCE':

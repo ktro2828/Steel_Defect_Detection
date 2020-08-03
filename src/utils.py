@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 
+import math
 import random
 
 import matplotlib.pyplot as plt
@@ -176,7 +177,7 @@ def visualize(sample, outputs, epoch, phase):
     # outputs = torch.sigmoid(outputs)
     outputs = outputs.cpu().detach().numpy()
     outputs = np.transpose(outputs, (0, 2, 3, 1))[idx]
-    thresh = np.mean(outputs)
+    thresh = np.mean(outputs) * 1.2
     # thresh = 0.5
     outputs = outputs[:, :, ch_idx]
     outputs[outputs < thresh] = 0

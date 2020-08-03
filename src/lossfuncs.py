@@ -85,16 +85,16 @@ class TanimotoLoss(nn.Module):
         super(TanimotoLoss, self).__init__()
 
     def forward(self, inputs, targets, smooth=1):
-        #inputs = F.softmax(inputs)
+        # inputs = F.softmax(inputs)
 
         inputs = inputs.view(-1)
         targets = targets.view(-1)
-        sum_square = torch.square(inputs).sum()
-        # square_i = torch.square(inputs)
-        # square_t = torch.square(targets)
+        # sum_square = torch.square(inputs).sum()
+        square_i = torch.square(inputs)
+        square_t = torch.square(targets)
         sum_product = (inputs * targets).sum()
-        denominator = (smooth + sum_square) - sum_product
-        # denominator = (square_i + square_t).sum() - sum_product
+        # denominator = (smooth + sum_square) - sum_product
+        denominator = (square_i + square_t) - sum_product
 
         tanimoto = (sum_product / denominator).mean()
         # tanimoto = (sum_product + smooth) / (denominator + smooth)

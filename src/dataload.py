@@ -70,8 +70,8 @@ def get_transforms(phase):
 def dataloader(root,
                df_path,
                phase,
-               batch_size=8,
-               num_workers=4):
+               batch_size=12,
+               num_workers=6):
     df = pd.read_csv(df_path)
     df['ClassId'] = df['ClassId'].astype(int)
     df = df.pivot(index='ImageId', columns='ClassId', values='EncodedPixels')
