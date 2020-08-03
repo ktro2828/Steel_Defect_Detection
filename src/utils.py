@@ -176,8 +176,8 @@ def visualize(sample, outputs, epoch, phase):
     # outputs = torch.sigmoid(outputs)
     outputs = outputs.cpu().detach().numpy()
     outputs = np.transpose(outputs, (0, 2, 3, 1))[idx]
-    # thresh = np.mean(outputs) * 1.2
-    thresh = 0.5
+    thresh = np.mean(outputs)
+    # thresh = 0.5
     outputs = outputs[:, :, ch_idx]
     outputs[outputs < thresh] = 0
     outputs[outputs > thresh] = 1
