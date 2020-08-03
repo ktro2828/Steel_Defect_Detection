@@ -158,13 +158,14 @@ def plot(scores, name):
 
 def visualize(sample, outputs, epoch, phase):
     ch_idx = None
-    batch_size = len(sample)
-    idx = random.randint(0, batch_size - 1)
+
     images = sample['image'].cpu().detach().numpy()
     masks = sample['mask'].cpu().detach().numpy()
 
-    images = np.transpose(images, (0, 2, 3, 1))[idx]
+    batch_size = images.shape[0]
+    idx = random.randint(0, batch_size - 1)
 
+    images = np.transpose(images, (0, 2, 3, 1))[idx]
     masks = np.transpose(masks, (0, 2, 3, 1))[idx]
     for ch in range(masks.shape[-1]):
         if masks[:, :, ch].any():
