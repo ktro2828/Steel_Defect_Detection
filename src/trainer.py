@@ -27,7 +27,7 @@ class Trainer(object):
         self.batch_size = {'train': 3, 'val': 3}
         self.accumlation_steps = 32 // self.batch_size['train']
         self.lr = 5e-4
-        self.num_epochs = 20
+        self.num_epochs = 40
         self.phases = ['train', 'val']
         self.device = torch.device(
             'cuda:0' if torch.cuda.is_available() else 'cpu')
