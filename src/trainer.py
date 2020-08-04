@@ -80,7 +80,8 @@ class Trainer(object):
     def _iterate(self, epoch, phase):
         meter = Meter(phase, epoch)
         start = time.strftime('%H:%M:%S')
-        print("Starting epoch: {} | phase: {} | Time: {}".format(epoch, phase, start))
+        print("Starting epoch: {} | phase: {} | Time: {}".format(
+            epoch + 1, phase, start))
         dl = self.dataloaders[phase]
         running_loss = 0.0
         total_steps = len(dl)
@@ -125,4 +126,4 @@ class Trainer(object):
                 state['best_loss'] = self.best_loss = val_loss
                 torch.save(state, "../trained_models/model.pth")
 
-            self.clinet.notify('Epoch: {} Done!'.format(epoch))
+            self.client.notify('Epoch: {} Done!'.format(epoch))

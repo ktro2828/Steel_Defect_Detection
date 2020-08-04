@@ -162,7 +162,7 @@ def visualize(sample, outputs, epoch, phase):
     images = sample['image'].cpu().detach().numpy()
     masks = sample['mask'].cpu().detach().numpy()
 
-    batch_size = images.shape[0]
+    # batch_size = images.shape[0]
     # idx = random.randint(0, batch_size - 1)
     idx = 0
 
@@ -172,7 +172,7 @@ def visualize(sample, outputs, epoch, phase):
         if masks[:, :, ch].any():
             ch_idx = ch
     if ch_idx is None:
-        print('*******Mask is None*******')
+        print('*********Mask is None*********')
         return
     masks = masks[:, :, ch_idx]
 
@@ -183,7 +183,7 @@ def visualize(sample, outputs, epoch, phase):
 
     outputs = outputs.cpu().detach().numpy()
     outputs = np.transpose(outputs, (0, 2, 3, 1))[idx]
-    thresh = np.mean(outputs) * 1.2
+    thresh = np.mean(outputs)
 
     outputs = outputs[:, :, ch_idx]
     outputs[outputs < thresh] = 0
@@ -201,6 +201,6 @@ def visualize(sample, outputs, epoch, phase):
     ax2.axis('off')
 
     plt.show()
-    plt.savefig('../predictions/{}_{}.png'.format(phase, epoch))
+    plt.savefig('../predictions/{}_{}.png'.format(phase, epoch+1))
     plt.close()
     print('******Saving {} image******'.format(phase))
