@@ -10,7 +10,7 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
-from line_notify
+import line_notify
 
 from dataload import dataloader
 from utils import Meter, epoch_log, visualize
