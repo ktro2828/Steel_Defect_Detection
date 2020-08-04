@@ -10,6 +10,8 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
+from line_notify
+
 from dataload import dataloader
 from utils import Meter, epoch_log, visualize
 from lossfuncs import DiceLoss, DiceBCELoss, IoULoss, FocalLoss, TanimotoLoss
@@ -63,6 +65,10 @@ class Trainer(object):
         self.losses = {phase: [] for phase in self.phases}
         self.dice_scores = {phase: [] for phase in self.phases}
         self.iou_scores = {phase: [] for phase in self.phases}
+
+        self.client = line_notify.LineNotify(
+            token='buNeQjYHp6sXPdwk1sMWUCmqLQr7z7czjLozKJdtevL'
+        )
 
     def _forward(self, images, targets):
         images = images.to(self.device)
@@ -118,4 +124,5 @@ class Trainer(object):
                 print('******** New optimal found, saving state ********')
                 state['best_loss'] = self.best_loss = val_loss
                 torch.save(state, "../trained_models/model.pth")
-            print()
+
+            self.clinet.notify('Epoch: {} Done!'.format(epoch))

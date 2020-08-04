@@ -91,14 +91,23 @@ class TanimotoLoss(nn.Module):
         targets = targets.view(-1)
 
         square_i = torch.square(inputs)
-        # square_t = torch.square(targets)
+        square_t = torch.square(targets)
 
-        sum_square = square_i.sum()
         sum_product = (inputs * targets).sum()
-        # denominator = (square_i + square_t).sum() - sum_product
-        denominator = smooth + sum_square - sum_product
-        # tanimoto = (sum_product + smooth) / (denominator + smooth)
-        tanimoto = sum_product / denominator
-        tanimoto = tanimoto.mean()
+        denominator = (square_i + square_t).sum() - sum_product
+        tanimoto = (sum_product + smooth) / (denominator + smooth)
 
         return 1 - tanimoto
+
+
+class TanimotoDualLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super(TanimotoDualLoss, self).__init__()
+        self.tanimoto = TanimotoLoss()
+
+    def forward(self, inputs, targets, smooth=1):
+        t_1 = self.tanimoto(inputs, targets)            # 1 - T(p, l)
+        t_2 = self.tanimoto(1 - inputs, 1 - targets)    # 1 - T(1-p, 1-l)
+        tanimoto = (t_1 + t_2) / 2
+
+        return tanimoto

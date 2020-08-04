@@ -7,7 +7,7 @@ albumentations:
 
 import os.path as osp
 
-from albumentations import HorizontalFlip, Normalize, Compose, RandomCrop
+from albumentations import HorizontalFlip, Normalize, Compose
 from albumentations.pytorch import ToTensor
 import pandas as pd
 from skimage import io
@@ -69,7 +69,7 @@ def get_transforms(phase):
 def dataloader(root,
                df_path,
                phase,
-               batch_size=12,
+               batch_size=8,
                num_workers=6):
     df = pd.read_csv(df_path)
     df['ClassId'] = df['ClassId'].astype(int)
