@@ -1,5 +1,6 @@
 # Steel_Defect_Detection
 competetion named "Steel Defect Detection" [on kaggle](https://www.kaggle.com/c/severstal-steel-defect-detection/notebooks)
+please download dataset from the above
 
 # Data Visualizatoin
 if you want to check total number of training data and visualize some of them
